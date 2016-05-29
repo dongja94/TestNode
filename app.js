@@ -18,7 +18,8 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
-app.use(express.bodyParser());
+app.use(express.limit('10mb'));
+app.use(express.bodyParser({uploadDir: __dirname + '/tmp'}));
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
@@ -30,8 +31,14 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/users', user.list);
+app.get('/profile',user.profile);
+app.get('/modify',user.modify);
+app.post('/user/new',user.newuser);
 app.post('/test', test.testarray);
+app.post('/user/update',user.updateuser);
+app.post('/user/photo',user.photo);
 app.get('/:user/friend',user.friend);
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
